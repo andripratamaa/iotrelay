@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kontrol Relay ESP32</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f9;
+      text-align: center;
+      padding: 50px;
+    }
+    h1 {
+      margin-bottom: 40px;
+    }
+    button {
+      font-size: 22px;
+      padding: 15px 50px;
+      margin: 20px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .on {
+      background: #28a745;
+      color: white;
+    }
+    .on:hover {
+      background: #218838;
+    }
+    .off {
+      background: #dc3545;
+      color: white;
+    }
+    .off:hover {
+      background: #c82333;
+    }
+    #status {
+      margin-top: 30px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Kontrol Relay ESP32 via ThingSpeak</h1>
+  <button class="on" onclick="sendCommand(1)">ON</button>
+  <button class="off" onclick="sendCommand(0)">OFF</button>
+  <p id="status">Menunggu perintah...</p>
+
+  <script>
+    // Ganti dengan Write API Key kamu
+    const apiKey = "WRITE_API_KEY";
+
+    function sendCommand(value) {
+      const url = `https://api.thingspeak.com/update?api_key=${apiKey}&field1=${value}`;
+      
+      fetch(url)
+        .then(response => response.text())
+        .then(data => {
+          if (data > 0) {
+            document.getElementById("status").innerText = 
+              (value === 1 ? "Relay ON terkirim ✅" : "Relay OFF terkirim ❌");
+          } else {
+            document.getElementById("status").innerText = "Gagal mengirim!";
+          }
+        })
+        .catch(error => {
+          document.getElementById("status").innerText = "Error: " + error;
+        });
+    }
+  </script>
+</body>
+</html>
