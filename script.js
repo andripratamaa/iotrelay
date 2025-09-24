@@ -1,4 +1,4 @@
-const dbUrl = "https://<relay-4f3b0>.firebaseio.com/relays.json"; 
+const dbUrl = "https://relay-4f3b0-default-rtdb.asia-southeast1.firebasedatabase.app"; 
 // Ganti <project-id> dengan project Firebase kamu
 
 async function toggleRelay(relay) {
