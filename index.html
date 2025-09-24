@@ -1,77 +1,84 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kontrol Relay ESP32</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f4f9;
-      text-align: center;
-      padding: 50px;
-    }
-    h1 {
-      margin-bottom: 40px;
-    }
-    button {
-      font-size: 22px;
-      padding: 15px 50px;
-      margin: 20px;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    .on {
-      background: #28a745;
-      color: white;
-    }
-    .on:hover {
-      background: #218838;
-    }
-    .off {
-      background: #dc3545;
-      color: white;
-    }
-    .off:hover {
-      background: #c82333;
-    }
-    #status {
-      margin-top: 30px;
-      font-size: 18px;
-      font-weight: bold;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kontrol 4 Relay</title>
+    <style>
+        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #f0f0f0; }
+        .container { text-align: center; }
+        .relay-control { margin: 20px; padding: 15px; border: 1px solid #ccc; border-radius: 10px; background-color: white; }
+        button { font-size: 1.2rem; padding: 10px 20px; margin: 5px; cursor: pointer; border: none; border-radius: 8px; color: white; }
+        .btn-on { background-color: #28a745; }
+        .btn-off { background-color: #dc3545; }
+    </style>
 </head>
 <body>
-  <h1>Kontrol Relay ESP32 via ThingSpeak</h1>
-  <button class="on" onclick="sendCommand(1)">ON</button>
-  <button class="off" onclick="sendCommand(0)">OFF</button>
-  <p id="status">Menunggu perintah...</p>
+    <div class="container">
+        <h1>Kontrol Multi Relay</h1>
+        
+        <div class="relay-control">
+            <h2>Relay 1</h2>
+            <button class="btn-on" data-relay="relay1">ON</button>
+            <button class="btn-off" data-relay="relay1">OFF</button>
+        </div>
+        
+        <div class="relay-control">
+            <h2>Relay 2</h2>
+            <button class="btn-on" data-relay="relay2">ON</button>
+            <button class="btn-off" data-relay="relay2">OFF</button>
+        </div>
 
-  <script>
-    // Ganti dengan Write API Key kamu
-    const apiKey = "7ZK0FHVMYJ8QUG92";
+        <div class="relay-control">
+            <h2>Relay 3</h2>
+            <button class="btn-on" data-relay="relay3">ON</button>
+            <button class="btn-off" data-relay="relay3">OFF</button>
+        </div>
 
-    function sendCommand(value) {
-      const url = `https://api.thingspeak.com/update?api_key=${apiKey}&field1=${value}`;
-      
-      fetch(url)
-        .then(response => response.text())
-        .then(data => {
-          if (data > 0) {
-            document.getElementById("status").innerText = 
-              (value === 1 ? "Relay ON terkirim ✅" : "Relay OFF terkirim ❌");
-          } else {
-            document.getElementById("status").innerText = "Gagal mengirim!";
-          }
-        })
-        .catch(error => {
-          document.getElementById("status").innerText = "Error: " + error;
+        <div class="relay-control">
+            <h2>Relay 4</h2>
+            <button class="btn-on" data-relay="relay4">ON</button>
+            <button class="btn-off" data-relay="relay4">OFF</button>
+        </div>
+
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+    <script>
+        // --- Ganti dengan Konfigurasi Firebase Anda ---
+        var firebaseConfig = {
+            apiKey: "AIzaSyAWVGErwMagsBhKpFQbvvdYe9zdRaLFQo0",
+            authDomain: "relay-4f3b0.firebaseapp.com",
+            databaseURL: "https://relay-4f3b0-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "relay-4f3b0",
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        var database = firebase.database();
+
+        // Fungsi untuk mengontrol relay
+        function setRelayStatus(relayId, status) {
+            console.log(`Mengatur ${relayId} menjadi ${status}`);
+            database.ref('relays/' + relayId).set(status);
+        }
+
+        // Tambahkan event listener untuk semua tombol ON
+        document.querySelectorAll('.btn-on').forEach(button => {
+            button.addEventListener('click', () => {
+                const relayId = button.getAttribute('data-relay');
+                setRelayStatus(relayId, "ON");
+            });
         });
-    }
-  </script>
+
+        // Tambahkan event listener untuk semua tombol OFF
+        document.querySelectorAll('.btn-off').forEach(button => {
+            button.addEventListener('click', () => {
+                const relayId = button.getAttribute('data-relay');
+                setRelayStatus(relayId, "OFF");
+            });
+        });
+    </script>
 </body>
 </html>
-
